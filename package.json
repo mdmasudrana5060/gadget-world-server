@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "build": "node index.js",
     "start-dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,6 +18,5 @@
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.10.0"
   },
-  "devDependencies": {},
   "description": ""
 }
