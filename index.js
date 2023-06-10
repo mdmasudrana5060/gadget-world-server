@@ -11,21 +11,23 @@ const port = process.env.PORT || 5000
 app.use(cors());
 app.use(express.json());
 
-// function verifyJWT(req, res, next) {
+function verifyJWT(req, res, next) {
 
-//     const authHeader = req.headers.authorization;
-//     if (!authHeader) {
-//         return res.status(401).send('unauthorized access')
-//     }
-//     const token = authHeader.split(' ')[1];
-//     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
-//         if (err) {
-//             return res.status(403).send({ message: 'forbidden access' })
-//         }
-//         req.decoded = decoded;
-//         next();
-//     })
-// }
+    const authHeader = req.headers.authorization;
+    
+
+    if (!authHeader) {
+        return res.status(401).send('unauthorized access')
+    }
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+        if (err) {
+            return res.status(403).send({ message: 'forbidden access' })
+        }
+        req.decoded = decoded;
+        next();
+    })
+}
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.2cacwdw.mongodb.net/?retryWrites=true&w=majority`;
@@ -44,11 +46,11 @@ async function run() {
 
         // auth
 
-        // app.post('/login', async (req, res) => {
-        //     const user = req.body;
-        //     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
-        //     res.send({ accessToken });
-        // })
+        app.post('/login', async (req, res) => {
+            const user = req.body;
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+            res.send({ accessToken });
+        })
 
 
         // get all products
@@ -104,26 +106,26 @@ async function run() {
 
         })
         // get orders
-        // app.get('/orders', verifyJWT, async (req, res) => {
-        //     const email = req.query.email;
-        //     const decodedEmail = req.decoded.email;
-        //     console.log(decodedEmail);
-        //     if (decodedEmail === email) {
-        //         const query = { email };
-        //         const cursor = orderCollection.find(query);
-        //         const order = await cursor.toArray();
-        //         res.send(order);
+        app.get('/orders', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+            const decodedEmail = req.decoded.email;
+            console.log(decodedEmail);
+            if (decodedEmail === email) {
+                const query = { email };
+                const cursor = orderCollection.find(query);
+                const order = await cursor.toArray();
+                res.send(order);
 
-        //     }
-        //     else {
-        //         res.sendStatus(403)
-        //     }
-
-
+            }
+            else {
+                res.sendStatus(403)
+            }
 
 
 
-        // })
+
+
+        })
         app.get('/orders', async (req, res) => {
             const email = req.query.email;
             const decodedEmail = req.decoded.email;
@@ -145,21 +147,21 @@ async function run() {
 
         })
 
-        // jwt
-        // app.get('/jwt', async (req, res) => {
-        //     const email = req.query.email;
+    //   jwt
+        app.get('/jwt', async (req, res) => {
+            const email = req.query.email;
 
-        //     const query = { email: email };
-        //     const user = await usersCollection.findOne(query);
-        //     console.log(user);
-        //     if (user) {
-        //         const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET);
-        //         // const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn:'1h'});
-        //         return res.send({ accessToken: token })
-        //     }
-        //     res.status(403).send({ accessToken: '' })
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            console.log(user);
+            if (user) {
+                const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET);
+                // const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn:'1h'});
+                return res.send({ accessToken: token })
+            }
+            res.status(403).send({ accessToken: '' })
 
-        // });
+        });
 
         // save user in the database from  signup page
         app.post('/users', async (req, res) => {
