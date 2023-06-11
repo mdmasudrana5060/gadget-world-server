@@ -13,8 +13,7 @@ app.use(express.json());
 
 function verifyJWT(req, res, next) {
 
-    const authHeader = req.headers.authorization;
-    
+    const authHeader = req.headers.authorization;  
 
     if (!authHeader) {
         return res.status(401).send('unauthorized access')
@@ -37,7 +36,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
-        console.log('database connnected');
+       
         const database = client.db("gadgetWorld");
         const productCollection = database.collection("products");
         const orderCollection = database.collection('orders');
